@@ -67,11 +67,24 @@ services:
   #
   #        A valid timezone name to run as (for scheduling watch checking) see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   #      - TZ=America/Los_Angeles
-  
-      # Comment out ports: when using behind a reverse proxy , enable networks: etc.
+      environment:
+        - PLAYWRIGHT_DRIVER_URL=ws://playwright:3000
+      depends_on:
+        - playwright
       ports:
         - 5000:5000
       restart: unless-stopped
+
+    playwright:
+      image: browserless/chrome
+      hostname: playwright
+      restart: unless-stopped
+      environment:
+        - MAX_CONCURRENT_SESSIONS=10
+        - SCREEN_WIDTH=1920
+        - SCREEN_HEIGHT=1024
+        - MAX_QUEUE_LENGTH=10
+        - CONNECTION_TIMEOUT=300000
 
      # Used for fetching pages via WebDriver+Chrome where you need Javascript support.
      # Now working on arm64 (needs testing on rPi - tested on Oracle ARM instance)
@@ -118,4 +131,3 @@ services:
 
 volumes:
   changedetection-data:
-
